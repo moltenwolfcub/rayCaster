@@ -2,10 +2,8 @@ import pygame
 from pygame.sprite import Sprite
 
 class MazeElement(Sprite):
-    """A Class to manage the maze"""
 
-    def __init__(self, game, shape):
-        """Create the maze"""
+    def __init__(self, shape):
         super().__init__()
 
         self.image = pygame.image.load('graphics/maze_color.png')

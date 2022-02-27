@@ -1,8 +1,14 @@
-class Settings:
+class StaticSettings:
 
     def __init__(self):
 
         #screen
-        self.screen_width = 1800
-        self.screen_height = 1000
-        self.screen_base_color = (0, 0, 50)
+        self.screenWidth = 1800
+        self.screenHeight = 1000
+        self.screenBaseColor = (0, 0, 50)
+
+        #player
+        self.playerSize = 32
+        self.playerSpeed = 0.3
+        self.playerSprintAjust = 0.15
+        self.playerSneakAjust = -0.15

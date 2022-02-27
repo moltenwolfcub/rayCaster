@@ -3,8 +3,9 @@ import sys
 import pygame
 
 
-from settings import Settings
+from settings import StaticSettings
 from mazeElement import MazeElement
+from player import Player
 
 
 
@@ -14,10 +15,11 @@ class RayCasterMain:
     def __init__(self) -> None:
         pygame.init()
 
-        self.settings = Settings()
+        self.settings = StaticSettings()
 
         self.screen_init()
         self.maze_init()
+        self.player_init()
 
         self.running = True
 
@@ -25,7 +27,7 @@ class RayCasterMain:
         self.icon = pygame.image.load('graphics/icon.png')
         pygame.display.set_icon(self.icon)
 
-        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        self.screen = pygame.display.set_mode((self.settings.screenWidth, self.settings.screenHeight))
         pygame.display.set_caption("RayCaster")
 
     def maze_init(self):
@@ -33,16 +35,20 @@ class RayCasterMain:
 
         self.maze_elements_list = [
             #edge walls
-            (0, 0, 25, self.settings.screen_height),
-            (self.settings.screen_width-25, 0, 25, self.settings.screen_height),
-            (0, 0, self.settings.screen_width, 25),
-            (0, self.settings.screen_height-25, self.settings.screen_width, 25)
+            (0, 0, 25, self.settings.screenHeight),
+            (self.settings.screenWidth-25, 0, 25, self.settings.screenHeight),
+            (0, 0, self.settings.screenWidth, 25),
+            (0, self.settings.screenHeight-25, self.settings.screenWidth, 25),
+
+            (self.settings.screenWidth//2 ,0, 50, self.settings.screenHeight//3)
         ]
 
         for part in self.maze_elements_list:
-            element = MazeElement(self, part)
+            element = MazeElement(part)
             self.maze_parts.add(element)
 
+    def player_init(self):
+        self.player = Player()
 
 
 
@@ -60,15 +66,44 @@ class RayCasterMain:
     def check_keydown_events(self, event):
         if event.key == pygame.K_ESCAPE:
             sys.exit()
+        
+        elif event.key == pygame.K_d:
+            self.player.moving["right"] = True
+        elif event.key == pygame.K_a:
+            self.player.moving["left"] = True
+        elif event.key == pygame.K_s:
+            self.player.moving["down"] = True
+        elif event.key == pygame.K_w:
+            self.player.moving["up"] = True
+
+        elif event.key == pygame.K_LCTRL:
+            self.player.moving["sprinting"] = True
+        elif event.key == pygame.K_LSHIFT:
+            self.player.moving["sneaking"] = True
 
     def check_keyup_events(self, event):
-        pass
+
+        if event.key == pygame.K_d:
+            self.player.moving["right"] = False
+        elif event.key == pygame.K_a:
+            self.player.moving["left"] = False
+        elif event.key == pygame.K_s:
+            self.player.moving["down"] = False
+        elif event.key == pygame.K_w:
+            self.player.moving["up"] = False
+
+        elif event.key == pygame.K_LCTRL:
+            self.player.moving["sprinting"] = False
+        elif event.key == pygame.K_LSHIFT:
+            self.player.moving["sneaking"] = False
 
 
     def update_screen(self):
-        self.screen.fill(self.settings.screen_base_color)
+        self.screen.fill(self.settings.screenBaseColor)
 
         self.maze_parts.draw(self.screen)
+        self.player.update_player()
+        self.player.draw_player(self.screen)
 
         pygame.display.flip()
 
