@@ -22,6 +22,8 @@ class RayCasterMain:
         self.running = True
 
     def screen_init(self):
+        self.icon = pygame.image.load('graphics/icon.png')
+        pygame.display.set_icon(self.icon)
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("RayCaster")
@@ -64,6 +66,7 @@ class RayCasterMain:
 
 
     def update_screen(self):
+        self.screen.fill(self.settings.screen_base_color)
 
         self.maze_parts.draw(self.screen)
 
