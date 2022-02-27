@@ -21,6 +21,11 @@ class Player:
             "up": False,
             "down": False,
 
+            "turning": {
+                "right": False,
+                "left": False
+            },
+
             "sprinting": False,
             "sneaking": False
         }
@@ -28,14 +33,23 @@ class Player:
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
 
+        self.angle = pygame.math.Vector2(0, -1)
+
     
     def reset_player(self):
         self.rect.center = (self.settings.screenWidth//2, self.settings.screenHeight//2)
+
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
 
     def update_player(self):
 
         self.movingX = self.moving["right"] - self.moving["left"]
         self.movingY = self.moving["down"] - self.moving["up"]
+        self.rotation = self.moving["turning"]["right"] - self.moving["turning"]["left"]
+
+        if self.rotation != 0:
+            self.angle.rotate_ip(self.rotation * self.settings.playerRotateSpeed)
 
         if self.moving["sneaking"]:
             self.x += self.movingX*(self.settings.playerSpeed+self.settings.playerSneakAjust)

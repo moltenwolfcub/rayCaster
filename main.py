@@ -23,6 +23,8 @@ class RayCasterMain:
 
         self.running = True
 
+        self.tmp = False
+
     def screen_init(self):
         self.icon = pygame.image.load('graphics/icon.png')
         pygame.display.set_icon(self.icon)
@@ -76,10 +78,19 @@ class RayCasterMain:
         elif event.key == pygame.K_w:
             self.player.moving["up"] = True
 
+        elif event.key == pygame.K_RIGHT:
+            self.player.moving["turning"]["right"] = True
+        elif event.key == pygame.K_LEFT:
+            self.player.moving["turning"]["left"] = True
+
         elif event.key == pygame.K_LCTRL:
             self.player.moving["sprinting"] = True
         elif event.key == pygame.K_LSHIFT:
             self.player.moving["sneaking"] = True
+
+
+        elif event.key == pygame.K_SPACE:
+            self.tmp = True
 
     def check_keyup_events(self, event):
 
@@ -92,17 +103,24 @@ class RayCasterMain:
         elif event.key == pygame.K_w:
             self.player.moving["up"] = False
 
+        elif event.key == pygame.K_RIGHT:
+            self.player.moving["turning"]["right"] = False
+        elif event.key == pygame.K_LEFT:
+            self.player.moving["turning"]["left"] = False
+
         elif event.key == pygame.K_LCTRL:
             self.player.moving["sprinting"] = False
         elif event.key == pygame.K_LSHIFT:
             self.player.moving["sneaking"] = False
+
+        elif event.key == pygame.K_SPACE:
+            self.tmp = False
 
 
     def update_screen(self):
         self.screen.fill(self.settings.screenBaseColor)
 
         self.maze_parts.draw(self.screen)
-        self.player.update_player()
         self.player.draw_player(self.screen)
 
         pygame.display.flip()
@@ -113,6 +131,10 @@ class RayCasterMain:
     def run_game(self):
         while self.running:
             self.check_events()
+            self.player.update_player()
+
+            if self.tmp:
+                pygame.mouse.set_pos(self.settings.screenWidth//2, self.settings.screenHeight//2)
 
             self.update_screen()
 
