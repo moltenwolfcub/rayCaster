@@ -12,4 +12,4 @@ class StaticSettings:
         self.playerSprintAjust = 0.15
         self.playerSneakAjust = -0.15
         self.playerSpeed = 0.3
-        self.playerRotateSpeed = 0.5
+        self.playerRotateSpeed = 0.25

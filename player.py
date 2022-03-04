@@ -1,3 +1,4 @@
+import math
 import pygame
 
 from settings import StaticSettings
@@ -33,8 +34,7 @@ class Player:
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
 
-        self.angle = pygame.math.Vector2(0, -1)
-
+        self.angle = 0
     
     def reset_player(self):
         self.rect.center = (self.settings.screenWidth//2, self.settings.screenHeight//2)
@@ -44,22 +44,37 @@ class Player:
 
     def update_player(self):
 
-        self.movingX = self.moving["right"] - self.moving["left"]
-        self.movingY = self.moving["down"] - self.moving["up"]
+        self.LftRgtMotion = self.moving["right"] - self.moving["left"]
+        self.FwdBckMotion = self.moving["down"] - self.moving["up"]
         self.rotation = self.moving["turning"]["right"] - self.moving["turning"]["left"]
 
-        if self.rotation != 0:
-            self.angle.rotate_ip(self.rotation * self.settings.playerRotateSpeed)
+        self.angle += self.rotation * self.settings.playerRotateSpeed
+        self.angle = self.angle % 360
+
 
         if self.moving["sneaking"]:
-            self.x += self.movingX*(self.settings.playerSpeed+self.settings.playerSneakAjust)
-            self.y += self.movingY*(self.settings.playerSpeed+self.settings.playerSneakAjust)
+            if self.FwdBckMotion != 0:
+                self.x += self.settings.playerSpeed + self.settings.playerSneakAjust * math.sin(self.angle) * self.FwdBckMotion
+                self.y += self.settings.playerSpeed + self.settings.playerSneakAjust * math.cos(self.angle) * self.FwdBckMotion
+            if self.LftRgtMotion != 0:
+                self.x += self.settings.playerSpeed + self.settings.playerSneakAjust * math.sin(self.angle + 90 * self.LftRgtMotion)
+                self.x += self.settings.playerSpeed + self.settings.playerSneakAjust * math.cos(self.angle + 90 * self.LftRgtMotion)
+
         elif self.moving["sprinting"]:
-            self.x += self.movingX*(self.settings.playerSpeed+self.settings.playerSprintAjust)
-            self.y += self.movingY*(self.settings.playerSpeed+self.settings.playerSprintAjust)
+            if self.FwdBckMotion != 0:
+                self.x += self.settings.playerSpeed + self.settings.playerSprintAjust * math.sin(self.angle) * self.FwdBckMotion
+                self.y += self.settings.playerSpeed + self.settings.playerSprintAjust * math.cos(self.angle) * self.FwdBckMotion
+            if self.LftRgtMotion != 0:
+                self.x += self.settings.playerSpeed + self.settings.playerSprintAjust * math.sin(self.angle + 90 * self.LftRgtMotion)
+                self.x += self.settings.playerSpeed + self.settings.playerSprintAjust * math.cos(self.angle + 90 * self.LftRgtMotion)
+
         else:
-            self.x += self.movingX*self.settings.playerSpeed
-            self.y += self.movingY*self.settings.playerSpeed
+            if self.FwdBckMotion != 0:
+                self.x += self.settings.playerSpeed * math.sin(self.angle) * self.FwdBckMotion
+                self.y += self.settings.playerSpeed * math.cos(self.angle) * self.FwdBckMotion
+            if self.LftRgtMotion != 0:
+                self.x += self.settings.playerSpeed * math.sin(self.angle + 90 * self.LftRgtMotion)
+                self.x += self.settings.playerSpeed * math.cos(self.angle + 90 * self.LftRgtMotion)
 
         self.rect.x = self.x
         self.rect.y = self.y
