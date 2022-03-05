@@ -10,9 +10,13 @@ class Player:
 
         self.settings = StaticSettings()
 
-        self.image = pygame.image.load('graphics/player.png')
-        self.image = pygame.transform.scale(self.image, (self.settings.playerSize, self.settings.playerSize))
-        self.rect = self.image.get_rect()
+        #self.image = pygame.image.load('graphics/player.png')
+        #self.image = pygame.transform.scale(self.image, (self.settings.playerSize, self.settings.playerSize))
+        self.image = pygame.Surface((self.settings.playerSize, self.settings.playerSize), pygame.SRCALPHA)
+        pygame.draw.polygon(self.image, (128, 255, 0), ((self.settings.playerSize//2, 0), (self.settings.playerSize - 5, self.settings.playerSize), (5, self.settings.playerSize)))
+        self.original_image = self.image
+
+        self.rect = pygame.Rect(0, 0, self.settings.playerSize, self.settings.playerSize)
 
         self.reset_player()
 
@@ -50,6 +54,9 @@ class Player:
 
         self.angle += self.rotation * self.settings.playerRotateSpeed
         self.angle = self.angle % 360
+
+        
+        self.image = pygame.transform.rotate(self.original_image, -self.angle)
 
 
         if self.moving["sneaking"]:
